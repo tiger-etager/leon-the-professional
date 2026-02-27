@@ -26,11 +26,12 @@ def search_replace():
         file.write(data)
 
 
-def google():
+def main():
     import csv
     import json
 
     file_path = 'leon.csv'
+    new_dict = {}
 
     with open(file_path, mode='r', encoding='utf-8') as file:
         reader = csv.reader(file, quotechar='"', doublequote=True)
@@ -57,34 +58,30 @@ def google():
                 if client_ip != '46.16.17.54':
                     if client_ip != '46.16.17.55':
                         if client_ip != None:
-                            print(f"Time: {creation_time} || ClientIP: {client_ip} || Operation: {operation} || UserKey: {userkey} || Workload: {workload} || UserId: {userid} || IsManagedDevice: {is_managed_device} || ItemType: {item_type}")
+                            new_dict.update({"Time":{creation_time},"ClientIP":{client_ip},"Operation":{operation},"UserKey":{userkey},"Workload":{workload},"UserId":{userid},"IsManagedDevice":{is_managed_device},"ItemType":{item_type}})
+                            print(f"Time: {creation_time}, ClientIP: {client_ip}, Operation: {operation}, UserKey: {userkey}, Workload: {workload}, UserId: {userid}, IsManagedDevice: {is_managed_device}, ItemType: {item_type}")
 
             except json.JSONDecodeError:
                 # Håndter rækker med ugyldigt format eller tomme felter
                 print(f"Fejl i format: {raw_string}")
 
-    #for key in my_dict:
-    #    print(key)
-
-
-def main():
-    dicts_list = []
-
-    with open('leon.csv', mode='r') as file:
-        reader = csv.reader(file)
-        next(reader)  # Skip the header row if it exists
-
-        for row in reader:
-            # Extract 5th column (index 4) and convert to dict
-            dict_obj = ast.literal_eval(row[5])
-            dicts_list.append(dict_obj)
-
-    for row in dicts_list:
-        # Now dicts_list contains a dictionary for every row
-        print(row)
+    return new_dict
 
 
 
-google()
+
+def dict_to_csv(dict, filename):
+    fieldnames = ['Time', 'ClientIP', 'Operation', 'UserKey', 'Workload', 'UserId', 'IsManagedDevice', 'ItemType']
+    with open(filename, mode='w', newline='', encoding='utf-8') as output_file:
+        writer = csv.DictWriter(output_file, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerow(dict)
+
+
+
+
+
+
 #search_replace()
-#main()
+dict = main()
+dict_to_csv(dict, 'Leon_new.csv')
